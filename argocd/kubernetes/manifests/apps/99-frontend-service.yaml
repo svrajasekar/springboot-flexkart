@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-service-deployment
+  labels:
+    app: frontend-service
+    version: v1.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-service
+      version: v1.0
+  template:
+    metadata:
+      labels:
+        app: frontend-service
+        version: v1.0
+    spec:
+      containers:
+        - name: frontend-service
+          image: svrajasekar/flexkart-frontend-service:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend-service
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-reviews-service-deployment
+  labels:
+    app: product-reviews-service
+    version: v1.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-reviews-service
+      version: v1.0
+  template:
+    metadata:
+      labels:
+        app: product-reviews-service
+        version: v1.0
+    spec:
+      containers:
+        - name: product-reviews-service
+          image: svrajasekar/flexkart-product-reviews-service:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9005
+          volumeMounts:
+            - mountPath: /data
+              name: flexkart-pv-storage
+      volumes:
+        - name: flexkart-pv-storage
+          persistentVolumeClaim:
+            claimName: flexkart-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-reviews-service
+spec:
+  selector:
+    app: product-reviews-service
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9005
+  
